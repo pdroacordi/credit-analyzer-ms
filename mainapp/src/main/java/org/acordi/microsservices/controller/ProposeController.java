@@ -5,10 +5,10 @@ import org.acordi.microsservices.dto.ProposeResponseDTO;
 import org.acordi.microsservices.service.ProposeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/propose")
@@ -20,6 +20,16 @@ public class ProposeController {
     @PostMapping("")
     public ResponseEntity<ProposeResponseDTO> create(@RequestBody ProposeRequestDTO requestDTO){
         ProposeResponseDTO responseDTO = proposeService.create(requestDTO);
-        return ResponseEntity.status(202).body(responseDTO);
+        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(responseDTO.getId())
+                .toUri())
+                .body(responseDTO);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<ProposeResponseDTO>> getProposes(){
+        List<ProposeResponseDTO> proposes = proposeService.getProposes();
+        return ResponseEntity.ok(proposes);
     }
 }

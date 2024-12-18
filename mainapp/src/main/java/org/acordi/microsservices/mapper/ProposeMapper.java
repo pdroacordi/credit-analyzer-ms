@@ -7,6 +7,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper
 public interface ProposeMapper {
 
@@ -28,6 +30,13 @@ public interface ProposeMapper {
     @Mapping(target = "cpf", source = "user.cpf")
     @Mapping(target = "phone", source = "user.phone")
     @Mapping(target = "income", source = "user.income")
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "askedValue", source = "askedValue")
+    @Mapping(target = "paymentTerm", source = "paymentTerm")
+    @Mapping(target = "approved", source = "approved")
+    @Mapping(target = "observation", ignore = true)
     ProposeResponseDTO toProposeResponseDTO(Propose propose);
+
+    List<ProposeResponseDTO> toListOfProposeResponseDto(Iterable<Propose> proposes);
 
 }
