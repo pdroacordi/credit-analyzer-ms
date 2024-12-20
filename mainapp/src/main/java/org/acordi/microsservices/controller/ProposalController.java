@@ -1,8 +1,8 @@
 package org.acordi.microsservices.controller;
 
-import org.acordi.microsservices.dto.ProposeRequestDTO;
-import org.acordi.microsservices.dto.ProposeResponseDTO;
-import org.acordi.microsservices.service.ProposeService;
+import org.acordi.microsservices.dto.ProposalRequestDTO;
+import org.acordi.microsservices.dto.ProposalResponseDTO;
+import org.acordi.microsservices.service.ProposalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +12,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/propose")
-public class ProposeController {
+public class ProposalController {
 
     @Autowired
-    private ProposeService proposeService;
+    private ProposalService proposalService;
 
     @PostMapping("")
-    public ResponseEntity<ProposeResponseDTO> create(@RequestBody ProposeRequestDTO requestDTO){
-        ProposeResponseDTO responseDTO = proposeService.create(requestDTO);
+    public ResponseEntity<ProposalResponseDTO> create(@RequestBody ProposalRequestDTO requestDTO){
+        ProposalResponseDTO responseDTO = proposalService.create(requestDTO);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(responseDTO.getId())
@@ -28,8 +28,8 @@ public class ProposeController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ProposeResponseDTO>> getProposes(){
-        List<ProposeResponseDTO> proposes = proposeService.getProposes();
-        return ResponseEntity.ok(proposes);
+    public ResponseEntity<List<ProposalResponseDTO>> getProposals(){
+        List<ProposalResponseDTO> proposals = proposalService.getProposals();
+        return ResponseEntity.ok(proposals);
     }
 }

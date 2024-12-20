@@ -1,8 +1,8 @@
 package org.acordi.microsservices.mapper;
 
-import org.acordi.microsservices.dto.ProposeRequestDTO;
-import org.acordi.microsservices.dto.ProposeResponseDTO;
-import org.acordi.microsservices.entity.Propose;
+import org.acordi.microsservices.dto.ProposalRequestDTO;
+import org.acordi.microsservices.dto.ProposalResponseDTO;
+import org.acordi.microsservices.entity.Proposal;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -10,9 +10,9 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 
 @Mapper
-public interface ProposeMapper {
+public interface ProposalMapper {
 
-    ProposeMapper INSTANCE = Mappers.getMapper(ProposeMapper.class);
+    ProposalMapper INSTANCE = Mappers.getMapper(ProposalMapper.class);
 
     @Mapping(target = "user.name", source = "name")
     @Mapping(target = "user.lastname", source = "lastname")
@@ -21,9 +21,9 @@ public interface ProposeMapper {
     @Mapping(target = "user.income", source = "income")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "approved", ignore = true)
-    @Mapping(target = "integrated", ignore = true)
+    @Mapping(target = "integrated", constant = "true")
     @Mapping(target = "description", ignore = true)
-    Propose toPropose(ProposeRequestDTO proposeRequestDTO);
+    Proposal toProposal(ProposalRequestDTO proposalRequestDTO);
 
     @Mapping(target = "name", source = "user.name")
     @Mapping(target = "lastname", source = "user.lastname")
@@ -35,8 +35,8 @@ public interface ProposeMapper {
     @Mapping(target = "paymentTerm", source = "paymentTerm")
     @Mapping(target = "approved", source = "approved")
     @Mapping(target = "observation", ignore = true)
-    ProposeResponseDTO toProposeResponseDTO(Propose propose);
+    ProposalResponseDTO toProposalResponseDTO(Proposal proposal);
 
-    List<ProposeResponseDTO> toListOfProposeResponseDto(Iterable<Propose> proposes);
+    List<ProposalResponseDTO> toListOfProposalResponseDto(Iterable<Proposal> proposals);
 
 }

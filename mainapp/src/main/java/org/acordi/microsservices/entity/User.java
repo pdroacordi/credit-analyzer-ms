@@ -1,10 +1,7 @@
 package org.acordi.microsservices.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -28,19 +25,20 @@ public class User {
     private Double income;
 
     @OneToMany(mappedBy = "user")
-    private List<Propose> proposes;
+    @JsonBackReference
+    private List<Proposal> proposals;
 
     public User() {
     }
 
-    public User(Long id, String name, String lastname, String cpf, String phone, Double income, List<Propose> proposes) {
+    public User(Long id, String name, String lastname, String cpf, String phone, Double income, List<Proposal> proposals) {
         this.id = id;
         this.name = name;
         this.lastname = lastname;
         this.cpf = cpf;
         this.phone = phone;
         this.income = income;
-        this.proposes = proposes;
+        this.proposals = proposals;
     }
 
     public Long getId() {
@@ -91,11 +89,11 @@ public class User {
         this.income = income;
     }
 
-    public List<Propose> getProposes() {
-        return proposes;
+    public List<Proposal> getProposals() {
+        return proposals;
     }
 
-    public void setProposes(List<Propose> proposes) {
-        this.proposes = proposes;
+    public void setProposals(List<Proposal> proposals) {
+        this.proposals = proposals;
     }
 }
