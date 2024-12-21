@@ -20,7 +20,7 @@ public class NotIntegratedProposal {
 
     private final Logger logger = LoggerFactory.getLogger(NotIntegratedProposal.class);
 
-    public NotIntegratedProposal(ProposalRepository proposalRepository, NotificationService notificationService, @Value("${rabbitmq.pendingproposal.exchange}") String exchange) {
+    public NotIntegratedProposal(ProposalRepository proposalRepository, NotificationService notificationService, @Value("${rabbitmq.exchange.proposal.pending}") String exchange) {
         this.proposalRepository = proposalRepository;
         this.notificationService = notificationService;
         this.exchange = exchange;

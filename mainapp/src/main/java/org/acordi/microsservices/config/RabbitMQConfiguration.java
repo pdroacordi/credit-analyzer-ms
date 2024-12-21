@@ -14,8 +14,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfiguration {
 
-    @Value("${rabbitmq.pendingproposal.exchange}")
-    private String exchange;
+    @Value("${rabbitmq.exchange.proposal.pending}")
+    private String pendingExchange;
+
+    @Value("${rabbitmq.exchange.proposal.completed}")
+    private String completedExchange;
 
     @Bean
     public Queue createPendingProposalQueue(){
@@ -47,23 +50,39 @@ public class RabbitMQConfiguration {
     }
 
     @Bean
-    public FanoutExchange createFanoutExchange(){
-        return ExchangeBuilder.fanoutExchange(exchange).build();
+    public FanoutExchange createFanoutPendingExchange(){
+        return ExchangeBuilder.fanoutExchange(pendingExchange).build();
+    }
+
+    @Bean
+    public FanoutExchange createFanoutCompletedExchange(){
+        return ExchangeBuilder.fanoutExchange(completedExchange).build();
     }
 
     @Bean
     public Binding createBindingPendingProposal(){
-        return BindingBuilder.bind(createPendingProposalQueue()).to(createFanoutExchange());
+        return BindingBuilder.bind(createPendingProposalQueue()).to(createFanoutPendingExchange());
     }
+
+    @Bean
+    public Binding createBindingCompletedProposal(){
+        return BindingBuilder.bind(createCompletedProposalQueue()).to(createFanoutCompletedExchange());
+    }
+
 
 
     @Bean
     public Binding createBindingPendingNotification(){
-        return BindingBuilder.bind(createPendingNotificationQueue()).to(createFanoutExchange());
+        return BindingBuilder.bind(createPendingNotificationQueue()).to(createFanoutPendingExchange());
     }
 
     @Bean
-    public Jackson2JsonMessageConverter jackson2JsonMessageConverter(){
+    public Binding createBindingCompletedNotification(){
+        return BindingBuilder.bind(createCompletedNotificationQueue()).to(createFanoutCompletedExchange());
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 

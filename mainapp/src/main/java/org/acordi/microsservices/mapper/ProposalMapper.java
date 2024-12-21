@@ -22,7 +22,7 @@ public interface ProposalMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "approved", ignore = true)
     @Mapping(target = "integrated", constant = "true")
-    @Mapping(target = "description", ignore = true)
+    @Mapping(target = "observation", ignore = true)
     Proposal toProposal(ProposalRequestDTO proposalRequestDTO);
 
     @Mapping(target = "name", source = "user.name")
@@ -34,7 +34,7 @@ public interface ProposalMapper {
     @Mapping(target = "askedValue", source = "askedValue")
     @Mapping(target = "paymentTerm", source = "paymentTerm")
     @Mapping(target = "approved", source = "approved")
-    @Mapping(target = "observation", ignore = true)
+    @Mapping(target = "observation", source = "observation")
     ProposalResponseDTO toProposalResponseDTO(Proposal proposal);
 
     List<ProposalResponseDTO> toListOfProposalResponseDto(Iterable<Proposal> proposals);

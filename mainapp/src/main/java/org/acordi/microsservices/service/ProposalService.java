@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ProposalService {
@@ -19,7 +20,7 @@ public class ProposalService {
     private final NotificationService notificationService;
     private final String exchange;
 
-    public ProposalService(ProposalRepository proposalRepository, UserService userService, NotificationService notificationService, @Value("${rabbitmq.pendingproposal.exchange}") String exchange) {
+    public ProposalService(ProposalRepository proposalRepository, UserService userService, NotificationService notificationService, @Value("${rabbitmq.exchange.proposal.pending}") String exchange) {
         this.proposalRepository = proposalRepository;
         this.userService = userService;
         this.notificationService = notificationService;
@@ -55,5 +56,19 @@ public class ProposalService {
 
     public List<ProposalResponseDTO> getProposals() {
         return ProposalMapper.INSTANCE.toListOfProposalResponseDto( proposalRepository.findAll() );
+    }
+
+    public boolean update(Proposal proposal){
+        Proposal temp = proposalRepository.findById(proposal.getId()).orElse(null);
+
+        if(temp == null) throw new RuntimeException("Proposta Inexistente.");
+
+        if( temp.getPaymentTerm() != proposal.getPaymentTerm()) temp.setPaymentTerm( proposal.getPaymentTerm() );
+        if( !Objects.equals(temp.getAskedValue(), proposal.getAskedValue())) temp.setAskedValue( proposal.getAskedValue() );
+        if( temp.getApproved() != proposal.getApproved()) temp.setApproved( proposal.getApproved() );
+        if( !Objects.equals(temp.getObservation(), proposal.getObservation() ) ) temp.setObservation( proposal.getObservation() );
+
+        proposalRepository.save( temp );
+        return true;
     }
 }

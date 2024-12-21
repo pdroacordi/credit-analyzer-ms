@@ -13,20 +13,20 @@ public class Proposal {
 
     private boolean integrated;
 
-    private String description;
+    private String observation;
 
     private User user;
 
     public Proposal() {
     }
 
-    public Proposal(Long id, Double askedValue, int paymentTerm, Boolean approved, boolean integrated, String description, User user) {
+    public Proposal(Long id, Double askedValue, int paymentTerm, Boolean approved, boolean integrated, String observation, User user) {
         this.id = id;
         this.askedValue = askedValue;
         this.paymentTerm = paymentTerm;
         this.approved = approved;
         this.integrated = integrated;
-        this.description = description;
+        this.observation = observation;
         this.user = user;
     }
 
@@ -70,12 +70,12 @@ public class Proposal {
         this.integrated = integrated;
     }
 
-    public String getDescription() {
-        return description;
+    public String getObservation() {
+        return observation;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setObservation(String observation) {
+        this.observation = observation;
     }
 
     public User getUser() {
