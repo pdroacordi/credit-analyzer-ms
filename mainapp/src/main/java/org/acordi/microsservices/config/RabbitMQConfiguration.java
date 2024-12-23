@@ -20,9 +20,17 @@ public class RabbitMQConfiguration {
     @Value("${rabbitmq.exchange.proposal.completed}")
     private String completedExchange;
 
+    @Value("${rabbitmq.exchange.proposal.dead.pending}")
+    private String deadPendingExchange;
+
+    @Value("${rabbitmq.exchange.proposal.dead.completed}")
+    private String deadCompletedExchange;
+
     @Bean
     public Queue createPendingProposalQueue(){
-        return QueueBuilder.durable("pending-proposal.ms-credit-analysis").build();
+        return QueueBuilder.durable("pending-proposal.ms-credit-analysis")
+                .deadLetterExchange(deadPendingExchange)
+                .build();
     }
 
     @Bean
@@ -31,14 +39,26 @@ public class RabbitMQConfiguration {
     }
 
     @Bean
+    public Queue createPendingProposalDeadLetterQueue(){
+        return QueueBuilder.durable("pending-proposal.dlq").build();
+    }
+
+    @Bean
     public Queue createCompletedProposalQueue(){
-        return QueueBuilder.durable("completed-proposal.ms-credit-analysis").build();
+        return QueueBuilder.durable("completed-proposal.ms-credit-analysis")
+                .deadLetterExchange(deadCompletedExchange)
+                .build();
     }
 
     @Bean
     public Queue createCompletedNotificationQueue(){
         return QueueBuilder.durable("completed-proposal.ms-notification").build();
     }
+
+    @Bean Queue createCompletedProposalDeadLetterQueue(){
+        return QueueBuilder.durable("completed-proposal.dlq").build();
+    }
+
     @Bean
     public RabbitAdmin createRabbitAdmin(ConnectionFactory connectionFactory){
         return new RabbitAdmin(connectionFactory);
@@ -60,6 +80,17 @@ public class RabbitMQConfiguration {
     }
 
     @Bean
+    public FanoutExchange createFanoutPendingDeadLetterExchange(){
+        return ExchangeBuilder.fanoutExchange(deadPendingExchange).build();
+    }
+
+    @Bean
+    public FanoutExchange createFanoutCompletedDeadLetterExchange(){
+        return ExchangeBuilder.fanoutExchange(deadCompletedExchange).build();
+    }
+
+
+    @Bean
     public Binding createBindingPendingProposal(){
         return BindingBuilder.bind(createPendingProposalQueue()).to(createFanoutPendingExchange());
     }
@@ -69,8 +100,6 @@ public class RabbitMQConfiguration {
         return BindingBuilder.bind(createCompletedProposalQueue()).to(createFanoutCompletedExchange());
     }
 
-
-
     @Bean
     public Binding createBindingPendingNotification(){
         return BindingBuilder.bind(createPendingNotificationQueue()).to(createFanoutPendingExchange());
@@ -79,6 +108,16 @@ public class RabbitMQConfiguration {
     @Bean
     public Binding createBindingCompletedNotification(){
         return BindingBuilder.bind(createCompletedNotificationQueue()).to(createFanoutCompletedExchange());
+    }
+
+    @Bean
+    public Binding createBindingPendingProposalDeadLetter(){
+        return BindingBuilder.bind(createPendingProposalDeadLetterQueue()).to(createFanoutPendingDeadLetterExchange());
+    }
+
+    @Bean
+    public Binding createBindingCompletedProposalDeadLetter(){
+        return BindingBuilder.bind(createCompletedProposalDeadLetterQueue()).to(createFanoutCompletedDeadLetterExchange());
     }
 
     @Bean
@@ -94,4 +133,7 @@ public class RabbitMQConfiguration {
 
         return rabbitTemplate;
     }
+
+
+
 }
