@@ -1,0 +1,58 @@
+version: '3.8'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "15672:15672" # Porta do painel de gerenciamento
+      - "5672:5672"   # Porta padrão para comunicação
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: microservices
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  proposal-app:
+    environment:
+      SPRING.DATASOURCE.URL: jdbc:postgresql://db:5432/microservices
+      SPRING.RABBITMQ.HOST: rabbitmq
+    build:
+      context: .
+      dockerfile: ./mainapp/Dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+  credit-analysis-app:
+    build:
+      context: .
+      dockerfile: ./credit-analysis.ms/Dockerfile
+    depends_on:
+      proposal-app:
+        condition: service_started
+    ports:
+      - "8081:8081"
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
